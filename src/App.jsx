@@ -8,9 +8,17 @@ export default function App() {
   return (
     <BrowserRouter basename="/React-Mobile-POS-Project/">
       <Routes>
+        {/* 👇 DEFAULT PAGE (important fix) */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/scan" element={<ScanPage />} />
-        <Route path="/item" element={<ItemPage />} />
+
+        {/* 👇 extra safety (fixes GitHub Pages edge case) */}
+        <Route index element={<HomePage />} />
+
+        <Route path="scan" element={<ScanPage />} />
+        <Route path="item" element={<ItemPage />} />
+
+        {/* 👇 fallback route (prevents blank screen) */}
+        <Route path="*" element={<HomePage />} />
       </Routes>
     </BrowserRouter>
   );
