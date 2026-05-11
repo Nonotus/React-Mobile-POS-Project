@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import ScanPage from "./pages/ScanPage";
@@ -6,20 +6,20 @@ import ItemPage from "./pages/ItemPage";
 
 export default function App() {
   return (
-    <BrowserRouter basename="/React-Mobile-POS-Project/">
+    <HashRouter>
       <Routes>
-        {/* 👇 DEFAULT PAGE (important fix) */}
+        {/* Home */}
         <Route path="/" element={<HomePage />} />
 
-        {/* 👇 extra safety (fixes GitHub Pages edge case) */}
-        <Route index element={<HomePage />} />
+        {/* Scan page */}
+        <Route path="/scan" element={<ScanPage />} />
 
-        <Route path="scan" element={<ScanPage />} />
-        <Route path="item" element={<ItemPage />} />
+        {/* Item page (QR lands here) */}
+        <Route path="/item" element={<ItemPage />} />
 
-        {/* 👇 fallback route (prevents blank screen) */}
+        {/* Fallback */}
         <Route path="*" element={<HomePage />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
