@@ -1,52 +1,48 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { styles } from "../styles/styles";
 import saveToGoogleSheets from "../services/googleSheets";
 
 export default function ItemPage() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
-  const item = location.state?.item || "Unknown";
-  const price = location.state?.price || 0;
+  // ✅ GET DATA FROM QR URL
+  const item = searchParams.get("item") || "Unknown";
+  const price = Number(searchParams.get("price")) || 0;
 
   const [quantity, setQuantity] = useState(1);
 
   const total = price * quantity;
 
-const acceptPurchase = async () => {
-  const success = await saveToGoogleSheets({
-    datetime: new Date().toLocaleString(),
-    item,
-    price,
-    quantity,
-  });
+  const acceptPurchase = async () => {
+    const success = await saveToGoogleSheets({
+      datetime: new Date().toLocaleString(),
+      item,
+      price,
+      quantity,
+    });
 
-  if (success) {
-    alert("Saved!");
+    if (success) {
+      alert("Saved!");
+      navigate("/");
+    } else {
+      alert("Failed to save.");
+    }
+  };
 
-    navigate("/");
-  } else {
-    alert("Failed to save.");
-  }
-};
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h1>{item}</h1>
-
         <h2>₱{price}</h2>
 
         <h2>Quantity: {quantity}</h2>
 
-        {/* +1 and -1 */}
         <div style={styles.row}>
           <button
             style={styles.smallButton}
-            onClick={() =>
-              setQuantity((q) => Math.max(0, q - 1))
-            }
+            onClick={() => setQuantity((q) => Math.max(0, q - 1))}
           >
             -1
           </button>
@@ -59,13 +55,10 @@ const acceptPurchase = async () => {
           </button>
         </div>
 
-        {/* +0.5 and -0.5 */}
         <div style={styles.row}>
           <button
             style={styles.smallButton}
-            onClick={() =>
-              setQuantity((q) => Math.max(0, q - 0.5))
-            }
+            onClick={() => setQuantity((q) => Math.max(0, q - 0.5))}
           >
             -0.5
           </button>
@@ -81,10 +74,7 @@ const acceptPurchase = async () => {
         <h2>Total: ₱{total.toFixed(2)}</h2>
 
         <div style={styles.row}>
-          <button
-            style={styles.acceptButton}
-            onClick={acceptPurchase}
-          >
+          <button style={styles.acceptButton} onClick={acceptPurchase}>
             Accept
           </button>
 
