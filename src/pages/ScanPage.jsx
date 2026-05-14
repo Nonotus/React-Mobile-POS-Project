@@ -1,6 +1,6 @@
+import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default function ScanPage() {
   const navigate = useNavigate();
@@ -11,23 +11,22 @@ export default function ScanPage() {
       {
         fps: 10,
         qrbox: 250,
+        rememberLastUsedCamera: true,
+        supportedScanTypes: [],
       },
-      false
+      false,
     );
 
     scanner.render(
       (decodedText) => {
         try {
-          // QR FORMAT:
-          // {"name":"Coke","price":25}
-
           const data = JSON.parse(decodedText);
 
           scanner.clear();
 
           navigate("/item", {
             state: {
-              item: data.item,
+              item: data.name,
               price: data.price,
             },
           });
@@ -35,10 +34,30 @@ export default function ScanPage() {
           alert("Invalid QR");
         }
       },
-      (error) => {
-        console.log(error);
-      }
+      () => {},
     );
+
+    // Force back camera
+    Html5Qrcode.getCameras()
+      .then((devices) => {
+        if (devices && devices.length) {
+          // Try to find back camera
+          const backCamera = devices.find(
+            (device) =>
+              device.label.toLowerCase().includes("back") ||
+              device.label.toLowerCase().includes("rear"),
+          );
+
+          if (backCamera) {
+            scanner.applyVideoConstraints({
+              deviceId: { exact: backCamera.id },
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     return () => {
       scanner.clear().catch(() => {});
