@@ -29,7 +29,7 @@ export default function ScanPage() {
         // devices[0] = back
         // devices[1] = front
 
-        const cameraId = devices[0].id;
+        const cameraId = devices[1].id;
 
         await html5QrCode.start(
           cameraId,
