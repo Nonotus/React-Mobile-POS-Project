@@ -1,52 +1,91 @@
+import { Html5Qrcode } from "html5-qrcode";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default function ScanPage() {
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner(
-      "reader",
-      {
-        fps: 10,
-        qrbox: 250,
-      },
-      false
-    );
 
-    scanner.render(
-      (decodedText) => {
-        try {
-          // QR FORMAT:
-          // {"name":"Coke","price":25}
+    const html5QrCode = new Html5Qrcode("reader");
 
-          const data = JSON.parse(decodedText);
+    const startScanner = async () => {
 
-          scanner.clear();
+      try {
 
-          navigate("/item", {
-            state: {
-              item: data.item,
-              price: data.price,
-            },
-          });
-        } catch (err) {
-          alert("Invalid QR");
+        // Get cameras
+        const devices = await Html5Qrcode.getCameras();
+
+        console.log(devices);
+
+        if (!devices || devices.length === 0) {
+          alert("No cameras found");
+          return;
         }
-      },
-      (error) => {
-        console.log(error);
+
+        // TEMPORARY:
+        // Usually:
+        // devices[0] = back
+        // devices[1] = front
+
+        const cameraId = devices[0].id;
+
+        await html5QrCode.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: {
+              width: 250,
+              height: 250,
+            },
+          },
+
+          // SUCCESS
+          (decodedText) => {
+
+            try {
+
+              const data = JSON.parse(decodedText);
+
+              html5QrCode.stop();
+
+              navigate("/item", {
+                state: {
+                  item: data.name,
+                  price: data.price,
+                },
+              });
+
+            } catch (err) {
+              alert("Invalid QR");
+            }
+          },
+
+          // ERROR
+          () => {}
+        );
+
+      } catch (err) {
+        console.error(err);
       }
-    );
+    };
+
+    startScanner();
 
     return () => {
-      scanner.clear().catch(() => {});
+      html5QrCode.stop().catch(() => {});
     };
+
   }, [navigate]);
 
   return (
-    <div>
+    <div
+      style={{
+        padding: 20,
+        textAlign: "center",
+      }}
+    >
       <h2>Scan QR Code</h2>
 
       <div id="reader"></div>
