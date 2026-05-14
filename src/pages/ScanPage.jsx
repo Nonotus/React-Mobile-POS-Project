@@ -3,17 +3,13 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ScanPage() {
-
   const navigate = useNavigate();
 
   useEffect(() => {
-
     const html5QrCode = new Html5Qrcode("reader");
 
     const startScanner = async () => {
-
       try {
-
         // Get cameras
         const devices = await Html5Qrcode.getCameras();
 
@@ -24,12 +20,14 @@ export default function ScanPage() {
           return;
         }
 
-        // TEMPORARY:
-        // Usually:
-        // devices[0] = back
-        // devices[1] = front
+        const backCamera = devices.find(
+          (device) =>
+            device.label.toLowerCase().includes("back") ||
+            device.label.toLowerCase().includes("rear") ||
+            device.label.toLowerCase().includes("environment"),
+        );
 
-        const cameraId = devices[1].id;
+        const cameraId = backCamera ? backCamera.id : devices[0].id;
 
         await html5QrCode.start(
           cameraId,
@@ -43,9 +41,7 @@ export default function ScanPage() {
 
           // SUCCESS
           (decodedText) => {
-
             try {
-
               const data = JSON.parse(decodedText);
 
               html5QrCode.stop();
@@ -56,16 +52,14 @@ export default function ScanPage() {
                   price: data.price,
                 },
               });
-
             } catch (err) {
               alert("Invalid QR");
             }
           },
 
           // ERROR
-          () => {}
+          () => {},
         );
-
       } catch (err) {
         console.error(err);
       }
@@ -76,7 +70,6 @@ export default function ScanPage() {
     return () => {
       html5QrCode.stop().catch(() => {});
     };
-
   }, [navigate]);
 
   return (
