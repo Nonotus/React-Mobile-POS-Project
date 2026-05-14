@@ -59,13 +59,20 @@ export default function ScanPage() {
         console.log(err);
       });
 
-    return () => {
-      scanner.clear().catch(() => {});
+     return () => {
+      html5QrCode
+        .stop()
+        .catch(() => {});
     };
   }, [navigate]);
 
   return (
-    <div>
+    <div
+      style={{
+        padding: 20,
+        textAlign: "center",
+      }}
+    >
       <h2>Scan QR Code</h2>
 
       <div id="reader"></div>
