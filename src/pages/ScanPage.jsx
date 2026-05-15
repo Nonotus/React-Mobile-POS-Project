@@ -27,7 +27,6 @@ export default function ScanPage() {
 
           navigate("/item", {
             state: {
-              item: data.name,
               item: data.item,
               price: data.price,
             },
