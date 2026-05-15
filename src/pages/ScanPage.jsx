@@ -1,6 +1,7 @@
-import { Html5Qrcode } from "html5-qrcode";
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Html5Qrcode } from "html5-qrcode";
 
 export default function ScanPage() {
 
@@ -57,8 +58,8 @@ export default function ScanPage() {
 
               navigate("/item", {
                 state: {
-                  item: data.item || data.name,
-                  price: Number(data.price),
+                  item: data.item,
+                  price: data.price,
                 },
               });
 
