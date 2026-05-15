@@ -6,6 +6,10 @@ export default function ScanPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    Html5QrcodeScanner.getCameras().then((devices) => {
+      console.log(devices);
+    });
+
     const scanner = new Html5QrcodeScanner(
       "reader",
       {
