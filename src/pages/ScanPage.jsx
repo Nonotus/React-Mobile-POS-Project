@@ -11,6 +11,10 @@ export default function ScanPage() {
       {
         fps: 10,
         qrbox: 250,
+        rememberLastUsedCamera: true,
+        videoConstraints: {
+          facingMode: "environment",
+        },
       },
       false,
     );
@@ -22,6 +26,7 @@ export default function ScanPage() {
           // {"name":"Coke","price":25}
 
           const data = JSON.parse(decodedText);
+          console.log(data);
 
           scanner.clear();
 
