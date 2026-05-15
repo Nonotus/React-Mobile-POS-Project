@@ -26,9 +26,8 @@ export default function ItemPage() {
   const total =
     (price * quantity) + riceExtra;
 
-  const acceptPurchase = async () => {
-    console.log(riceQuantity);
-    const success = await saveToGoogleSheets({
+  const acceptPurchase = () => {
+    const orderData = {
       datetime: new Date().toLocaleString(),
       item,
       price,
@@ -36,15 +35,13 @@ export default function ItemPage() {
       riceQuantity,
       type,
       total,
-    });
+    };
 
-    if (success) {
-      alert("Saved!");
+    // Trigger save in background without 'await' to avoid UI blocking
+    saveToGoogleSheets(orderData);
 
-      navigate("/");
-    } else {
-      alert("Failed to save.");
-    }
+    // Immediate navigation back to Home with order data
+    navigate("/", { state: { lastOrder: orderData } });
   };
   return (
     <div style={styles.container}>
