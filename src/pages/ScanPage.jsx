@@ -33,15 +33,21 @@ export default function ScanPage() {
           // QR FORMAT:
           // {"name":"Coke","price":25}
 
-          const data = JSON.parse(decodedText);
+          const cleanText = decodedText.trim();
+
+          const data = JSON.parse(cleanText);
+
           console.log(data);
+          console.log(decodedText);
 
           scanner.clear();
 
           navigate("/item", {
             state: {
-              item: data.item,
+              item: data.item || data.name,
               price: data.price,
+              type: data.type || "normal",
+              rice: data.rice || 0,
             },
           });
         } catch (err) {
@@ -54,7 +60,7 @@ export default function ScanPage() {
     );
 
     return () => {
-      scanner.clear().catch(() => {});
+      scanner.clear().catch(() => { });
     };
   }, [navigate]);
 
