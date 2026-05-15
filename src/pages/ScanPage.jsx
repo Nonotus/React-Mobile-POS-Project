@@ -1,14 +1,18 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
 
 export default function ScanPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Html5QrcodeScanner.getCameras().then((devices) => {
-      console.log(devices);
-    });
+    Html5Qrcode.getCameras()
+      .then((devices) => {
+        console.log(devices);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     const scanner = new Html5QrcodeScanner(
       "reader",
