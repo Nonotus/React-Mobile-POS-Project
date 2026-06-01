@@ -21,27 +21,42 @@ export default function ItemPage() {
   const [riceQuantity, setRiceQuantity] =
     useState(defaultRice);
 
-  const riceExtra = riceQuantity * 20;
+  const ricePrice = riceQuantity * 20;
+
+  // Original meal price minus rice portion
+  const mealPrice =
+    type === "rice_meal"
+      ? Math.max(0, price - ricePrice)
+      : price;
 
   const total =
-    (price * quantity) + riceExtra;
+    (mealPrice * quantity) + ricePrice;
 
   const acceptPurchase = () => {
+
     const orderData = {
       datetime: new Date().toLocaleString(),
+
       item,
-      price,
+
       quantity,
+      mealPrice,
+
       riceQuantity,
+      ricePrice,
+
       type,
+
       total,
     };
 
-    // Trigger save in background without 'await' to avoid UI blocking
     saveToGoogleSheets(orderData);
 
-    // Immediate navigation back to Home with order data
-    navigate("/", { state: { lastOrder: orderData } });
+    navigate("/", {
+      state: {
+        lastOrder: orderData,
+      },
+    });
   };
   return (
     <div style={styles.container}>
@@ -56,19 +71,19 @@ export default function ItemPage() {
           <button
             style={styles.smallButton}
             onClick={() =>
-              setQuantity((q) => Math.max(0, q - 0.5))
+              setQuantity((q) => Math.max(0, q - 1))
             }
           >
-            -0.5
+            -1
           </button>
 
           <button
             style={styles.smallButton}
             onClick={() =>
-              setQuantity((q) => q + 0.5)
+              setQuantity((q) => q + 1)
             }
           >
-            +0.5
+            +1
           </button>
         </div>
 
