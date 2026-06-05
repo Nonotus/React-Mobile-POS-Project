@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { styles } from "../styles/styles";
 import saveToGoogleSheets from "../services/googleSheets";
+import { saveOfflineOrder }
+  from "../services/indexedDb";
 
 export default function ItemPage() {
   const navigate = useNavigate();
@@ -23,16 +25,17 @@ export default function ItemPage() {
 
   const ricePrice = riceQuantity * 20;
 
-  // Original meal price minus rice portion
   const mealPrice =
     type === "rice_meal"
-      ? Math.max(0, price - ricePrice)
+      ? price - 20
       : price;
 
   const total =
-    (mealPrice * quantity) + ricePrice;
+    type === "rice_meal"
+      ? (mealPrice + ricePrice) * quantity
+      : mealPrice * quantity;
 
-  const acceptPurchase = () => {
+  const acceptPurchase = async () => {
 
     const orderData = {
       datetime: new Date().toLocaleString(),
@@ -50,7 +53,19 @@ export default function ItemPage() {
       total,
     };
 
-    saveToGoogleSheets(orderData);
+    const success =
+      await saveToGoogleSheets(orderData);
+
+    if (!success) {
+      console.log(
+        "Google Sheets failed, saving offline"
+      );
+
+      await saveOfflineOrder(orderData);
+      console.log(
+        "Offline orders saved successfully"
+      );
+    }
 
     navigate("/", {
       state: {
@@ -65,7 +80,7 @@ export default function ItemPage() {
 
         <h2>₱{price}</h2>
 
-        <h2>Meal Quantity: {quantity}</h2>
+        <h2>Quantity: {quantity}</h2>
 
         <div style={styles.row}>
           <button

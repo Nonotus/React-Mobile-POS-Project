@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxqqNYAmMiIZI6XvfZU57KGFhiPD7b2eFz1ZqNOv-OK7SxhpGNu9OVxM8BYd_n9IxexQw/exec";
+  "broken url";
 
 export default async function saveToGoogleSheets(data) {
   try {

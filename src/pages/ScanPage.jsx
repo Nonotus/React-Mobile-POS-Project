@@ -55,7 +55,9 @@ export default function ScanPage() {
         }
       },
       (error) => {
-        console.log(error);
+        if (!error.includes("NotFoundException")) {
+          console.log(error);
+        }
       },
     );
 
